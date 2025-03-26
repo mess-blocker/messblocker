@@ -29,5 +29,5 @@ jobs:
             filename=$(basename "$file" .json)
             echo "Processing $filename"
             # Read the JSON file and send to KV
-            wrangler kv:key put --binding=MESSBLOCKER "$filename" "$(cat $file)" --namespace-id=${{ secrets.KV_NAMESPACE_ID }}
+            wrangler kv:key put "$filename" "$(cat $file)" --namespace-id=${{ secrets.KV_NAMESPACE_ID }}
           done
