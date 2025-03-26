@@ -3,7 +3,7 @@ name: Sync to Cloudflare KV
 on:
   push:
     branches: [main]
-    paths: ['lists/*.json'] # Fix 1: Match trigger to top-level JSON files only
+    paths: ['lists/**']
   workflow_dispatch:
 
 jobs:
@@ -12,18 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Validate JSON
-        run: |
-          npm install -g ajv-cli
-          # Fix 2: Validate only files being deployed
-          for file in lists/*.json; do
-            ajv validate -s schema/category-schema.json -d "$file" || exit 1
-          done
-      
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+      
+      - name: Validate JSON
+        run: |
+          npm install -g ajv-cli
+          find lists -name "*.json" -type f -exec ajv validate -s schema/category-schema.json -d {} \;
       
       - name: Install Wrangler
         run: npm install -g @cloudflare/wrangler
@@ -32,10 +29,10 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: |
-          # Fix 3: Add error handling and logging
-          set -e  # Exit on first error (optional, remove if you want to process all files)
           for file in lists/*.json; do
+            # Extract filename without extension
             filename=$(basename "$file" .json)
-            echo "Uploading $filename..."
-            wrangler kv:key put --namespace-id=${{ secrets.KV_NAMESPACE_ID }} "$filename" "$(cat "$file)" && echo "Successfully uploaded $filename" || echo "Failed to upload $filename"
+            echo "Processing $filename"
+            # Read the JSON file and send to KV
+            wrangler kv:key put --namespace-id=${{ secrets.KV_NAMESPACE_ID }} "$filename" "$(cat $file)"
           done
