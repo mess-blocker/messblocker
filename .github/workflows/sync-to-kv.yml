@@ -1,0 +1,33 @@
+name: Sync to Cloudflare KV
+
+on:
+  push:
+    branches: [main]
+    paths: ['lists/**']
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Validate JSON
+        run: |
+          npm install -g ajv-cli
+          find lists -name "*.json" -type f -exec ajv validate -s schema/category-schema.json -d {} \;
+      
+      - name: Install Wrangler
+        run: npm install -g wrangler
+      
+      - name: Deploy to Cloudflare KV
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: |
+          for file in lists/*.json; do
+            # Extract filename without extension
+            filename=$(basename "$file" .json)
+            echo "Processing $filename"
+            # Read the JSON file and send to KV
+            wrangler kv:key put --binding=MESSBLOCKER "$filename" "$(cat $file)" --namespace-id=${{ secrets.KV_NAMESPACE_ID }}
+          done
