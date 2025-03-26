@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Spam",
+    "file": "spam",
+    "description": "Accounts flagged with spam behaviour"
+  },
+  {
+    "name": "Betting",
+    "file": "betting",
+    "description": "# Accounts that provide betting services, are affiliated with betting services, or feature content related to betting."
+  }
+]
