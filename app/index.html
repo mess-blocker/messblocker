@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MessBlocker</title>
+  <meta name="description" content="A curation tool for X (Twitter)">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Preload fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚫</text></svg>">
+</head>
+<body>
+  <div class="app-container">
+    <!-- App Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="brand">
+          <h1 class="brand-name">MessBlocker</h1>
+          <p class="brand-tagline">Clean browsing, curated blocking.</p>
+        </div>
+        
+        <div class="search-container">
+          <div class="search-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24">
+              <path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+            <input 
+              type="text" 
+              id="search-input" 
+              class="search-input" 
+              placeholder="Search usernames... (Press / to focus)"
+              aria-label="Search usernames">
+            <button id="clear-search" class="clear-search-btn" aria-label="Clear search">
+              <svg viewBox="0 0 24 24">
+                <path d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+            <svg class="sun-icon" viewBox="0 0 24 24">
+              <path d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+            </svg>
+            <svg class="moon-icon" viewBox="0 0 24 24">
+              <path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-container" id="tabs-container">
+      <div class="tab-scroll-indicator left" id="tab-scroll-left">
+        <svg viewBox="0 0 24 24">
+          <path d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+      </div>
+      
+      <div class="tabs-wrapper" id="tabs-wrapper">
+        <div class="tabs-scroll" id="tabs-scroll">
+          <!-- Tabs will be populated by JavaScript -->
+          <div class="tabs-skeleton">
+            <div class="tab-skeleton"></div>
+            <div class="tab-skeleton"></div>
+            <div class="tab-skeleton"></div>
+            <div class="tab-skeleton"></div>
+            <div class="tab-skeleton"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="tab-scroll-indicator right" id="tab-scroll-right">
+        <svg viewBox="0 0 24 24">
+          <path d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-content">
+      <!-- Loading State -->
+      <div class="loading-state" id="loading-state">
+        <div class="header-skeleton">
+          <div class="header-skeleton-title"></div>
+          <div class="header-skeleton-subtitle"></div>
+        </div>
+        
+        <div class="grid-skeleton">
+          <div class="grid-item-skeleton"></div>
+          <div class="grid-item-skeleton"></div>
+          <div class="grid-item-skeleton"></div>
+          <div class="grid-item-skeleton"></div>
+          <div class="grid-item-skeleton"></div>
+          <div class="grid-item-skeleton"></div>
+          <div class="grid-item-skeleton"></div>
+          <div class="grid-item-skeleton"></div>
+          <div class="grid-item-skeleton"></div>
+          <div class="grid-item-skeleton"></div>
+          <div class="grid-item-skeleton"></div>
+          <div class="grid-item-skeleton"></div>
+        </div>
+      </div>
+      
+      <!-- Welcome View (new) -->
+      <div class="welcome-view" id="welcome-view">
+        <div class="welcome-card">
+          <div class="welcome-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z M6 6h.008v.008H6V6z" />
+            </svg>
+          </div>
+          <h2 class="welcome-title">Welcome to MessBlocker</h2>
+          <p class="welcome-message">Select a category above to browse curated block lists, or search for specific usernames.</p>
+          
+          <div class="welcome-features">
+            <div class="welcome-feature">
+              <svg viewBox="0 0 24 24">
+                <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>One-click copying of usernames</span>
+            </div>
+            <div class="welcome-feature">
+              <svg viewBox="0 0 24 24">
+                <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Fast, accurate search</span>
+            </div>
+          </div>
+          
+          <div class="welcome-start">
+            <p>Get started by selecting a category above</p>
+            <svg viewBox="0 0 24 24" class="welcome-arrow">
+              <path d="M8.25 6.75L12 3m0 0l3.75 3.75M12 3v18" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Category View -->
+      <div class="category-view hidden" id="category-view">
+        <div class="category-header">
+          <div class="category-info">
+            <h2 class="category-title" id="category-title">Category Name</h2>
+            <p class="category-count" id="category-count">0 usernames</p>
+          </div>
+          
+          <button class="copy-all-btn" id="copy-all-btn">
+            <svg viewBox="0 0 24 24">
+              <path d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+            </svg>
+            Copy All
+          </button>
+        </div>
+        
+        <div class="username-grid" id="username-grid">
+          <!-- Username cards will be populated by JavaScript -->
+        </div>
+        
+        <div class="pagination" id="pagination">
+          <button class="pagination-btn prev" id="prev-page">
+            <svg viewBox="0 0 24 24">
+              <path d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            Prev
+          </button>
+          
+          <div class="pagination-info" id="pagination-info">Page 1 of 1</div>
+          
+          <button class="pagination-btn next" id="next-page">
+            Next
+            <svg viewBox="0 0 24 24">
+              <path d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Search Results -->
+      <div class="search-results hidden" id="search-results">
+        <div class="search-header">
+          <div class="search-info">
+            <h2 class="search-title">Search Results</h2>
+            <p class="search-count" id="search-count">0 matches found</p>
+          </div>
+          
+          <button class="copy-all-btn" id="copy-search-results">
+            <svg viewBox="0 0 24 24">
+              <path d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+            </svg>
+            Copy All
+          </button>
+        </div>
+        
+        <div class="search-grid" id="search-grid">
+          <!-- Search results will be populated by JavaScript -->
+        </div>
+      </div>
+      
+      <!-- Empty State -->
+      <div class="empty-state hidden" id="empty-state">
+        <svg class="empty-icon" viewBox="0 0 24 24">
+          <path d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+        </svg>
+        <h3 class="empty-title" id="empty-state-title">No results found</h3>
+        <p class="empty-message" id="empty-state-message">Try a different search term</p>
+      </div>
+    </main>
+
+    <!-- Notification Toast -->
+    <div class="toast hidden" id="toast">
+      <svg class="toast-icon" viewBox="0 0 24 24">
+        <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span class="toast-message" id="toast-message">Copied to clipboard</span>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="tips-section">
+        <div class="tips-grid">
+          <div class="tip">
+            <div class="tip-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+              </svg>
+            </div>
+            <p class="tip-text">Share direct links to categories with friends</p>
+          </div>
+          
+          <div class="tip">
+            <div class="tip-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
+              </svg>
+            </div>
+            <p class="tip-text">Press "/" to quickly focus the search bar</p>
+          </div>
+          
+          <div class="tip">
+            <div class="tip-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
+              </svg>
+            </div>
+            <p class="tip-text">Check back regularly for updated block lists</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-info centered">
+        <p>Made with ♥ | <a href="https://github.com/mess-blocker/messblocker" target="_blank" rel="noopener noreferrer">GitHub</a></p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Load JavaScript -->
+  <script src="js/app.js"></script>
+</body>
+</html>
