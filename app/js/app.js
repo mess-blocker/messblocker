@@ -1,4 +1,6 @@
-/* Main Application Logic */
+/**
+ * MessBlocker - Main Application Logic
+ */
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize the application
@@ -22,11 +24,11 @@ class MessBlockerApp {
     this.showWelcome = true;
     
     // API Endpoints
-    this.apiBase = 'https://api.messblocker.com';
-    this.endpointCategories = `${this.apiBase}/api/categories`;
-    this.endpointList = (file) => `${this.apiBase}/api/list/${file}`;
-    this.endpointSearch = (query) => `${this.apiBase}/api/search?q=${encodeURIComponent(query)}`;
-        
+    this.apiBase = 'https://api.messblocker.com/api';
+    this.endpointCategories = `${this.apiBase}/categories`;
+    this.endpointList = (file) => `${this.apiBase}/list/${file}`;
+    this.endpointSearch = (query) => `${this.apiBase}/search?q=${encodeURIComponent(query)}`;
+    
     // DOM elements - cached for performance
     this.elements = {
       // Main containers
@@ -388,6 +390,8 @@ class MessBlockerApp {
   async search(query) {
     try {
       this.isSearching = true;
+      // Reset to page 1 when starting a new search
+      this.currentPage = 1;
       this.updateUI();
       
       const response = await fetch(this.endpointSearch(query));
@@ -414,6 +418,7 @@ class MessBlockerApp {
     this.searchQuery = '';
     this.searchResults = [];
     this.isSearching = false;
+    this.currentPage = 1; // Reset page number
     
     // Return to welcome or selected category
     this.updateUrl();
@@ -429,6 +434,7 @@ class MessBlockerApp {
     this.elements.categoryView.classList.add('hidden');
     this.elements.searchResults.classList.add('hidden');
     this.elements.emptyState.classList.add('hidden');
+    this.elements.pagination.classList.add('hidden');
     
     // Show appropriate view based on state
     if (this.isLoading) {
@@ -436,6 +442,11 @@ class MessBlockerApp {
     } else if (this.isSearching) {
       this.renderSearchResults();
       this.elements.searchResults.classList.remove('hidden');
+      
+      // Show pagination for search if needed (more than one page)
+      if (this.searchResults.length > this.pageSize) {
+        this.elements.pagination.classList.remove('hidden');
+      }
     } else if (this.showWelcome) {
       this.elements.welcomeView.classList.remove('hidden');
     } else if (this.selectedCategory) {
@@ -525,6 +536,24 @@ class MessBlockerApp {
     // Update header
     this.elements.searchCount.textContent = `${results.length} matches found`;
     
+    // Calculate pagination for search results
+    const totalPages = Math.ceil(results.length / this.pageSize);
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = Math.min(start + this.pageSize, results.length);
+    const currentResults = results.slice(start, end);
+    
+    // Update pagination UI
+    this.elements.paginationInfo.textContent = `Page ${this.currentPage} of ${totalPages || 1}`;
+    this.elements.prevPage.disabled = this.currentPage <= 1;
+    this.elements.nextPage.disabled = this.currentPage >= totalPages;
+    
+    // Show/hide pagination
+    if (totalPages <= 1) {
+      this.elements.pagination.classList.add('hidden');
+    } else {
+      this.elements.pagination.classList.remove('hidden');
+    }
+    
     // Render search results grid
     this.elements.searchGrid.innerHTML = '';
     
@@ -533,7 +562,8 @@ class MessBlockerApp {
       return;
     }
     
-    results.forEach(result => {
+    // Only render the current page of results
+    currentResults.forEach(result => {
       const card = document.createElement('div');
       card.className = 'username-card search-card';
       
@@ -639,27 +669,36 @@ class MessBlockerApp {
   }
   
   goToNextPage() {
-    if (!this.selectedCategory) return;
-    
-    const usernames = this.lists[this.selectedCategory.file] || [];
-    const totalPages = Math.ceil(usernames.length / this.pageSize);
-    
-    if (this.currentPage < totalPages) {
-      this.currentPage++;
-      this.renderCategoryView();
+    if (this.isSearching) {
+      const totalPages = Math.ceil(this.searchResults.length / this.pageSize);
+      if (this.currentPage < totalPages) {
+        this.currentPage++;
+        this.renderSearchResults();
+        this.elements.searchGrid.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else if (this.selectedCategory) {
+      const usernames = this.lists[this.selectedCategory.file] || [];
+      const totalPages = Math.ceil(usernames.length / this.pageSize);
       
-      // Scroll to top of grid
-      this.elements.usernameGrid.scrollIntoView({ behavior: 'smooth' });
+      if (this.currentPage < totalPages) {
+        this.currentPage++;
+        this.renderCategoryView();
+        this.elements.usernameGrid.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   }
   
   goToPrevPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.renderCategoryView();
       
-      // Scroll to top of grid
-      this.elements.usernameGrid.scrollIntoView({ behavior: 'smooth' });
+      if (this.isSearching) {
+        this.renderSearchResults();
+        this.elements.searchGrid.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        this.renderCategoryView();
+        this.elements.usernameGrid.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   }
 }
