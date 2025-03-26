@@ -12,15 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      
       - name: Validate JSON
         run: |
           npm install -g ajv-cli
           find lists -name "*.json" -type f -exec ajv validate -s schema/category-schema.json -d {} \;
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
       
       - name: Install Wrangler
         run: npm install -g @cloudflare/wrangler
