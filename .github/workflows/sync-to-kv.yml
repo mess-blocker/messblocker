@@ -17,14 +17,18 @@ jobs:
           npm install -g ajv-cli
           find lists -name "*.json" -type f -exec ajv validate -s schema/category-schema.json -d {} \;
       
-      - name: Process and Upload Files to KV
+      # Upload categories.json
+      - name: Upload categories
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: |
-            for file in lists/*.json; do
-              filename=$(basename "$file" .json)
-              echo "Processing $filename"
-              wrangler kv:key put --namespace-id=${{ secrets.KV_NAMESPACE_ID }} "$filename" --value="$(cat $file)"
-            done
+          command: kv:key put --namespace-id=${{ secrets.KV_NAMESPACE_ID }} "categories" --path="./lists/categories.json"
+      
+      # Upload betting.json
+      - name: Upload betting list
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: kv:key put --namespace-id=${{ secrets.KV_NAMESPACE_ID }} "betting" --path="./lists/betting.json"
