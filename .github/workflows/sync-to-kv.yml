@@ -17,27 +17,14 @@ jobs:
           npm install -g ajv-cli
           find lists -name "*.json" -type f -exec ajv validate -s schema/category-schema.json -d {} \;
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Process and Upload Files to KV
+        uses: cloudflare/wrangler-action@v3
         with:
-          node-version: '18'
-      
-      - name: Install Latest Wrangler
-        run: npm install -g wrangler
-      
-      - name: Deploy to Cloudflare KV
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-        run: |
-          # Create Wrangler config
-          mkdir -p ~/.wrangler
-          echo "api_token = \"$CLOUDFLARE_API_TOKEN\"" > ~/.wrangler/config/default.toml
-          
-          for file in lists/*.json; do
-            # Extract filename without extension
-            filename=$(basename "$file" .json)
-            echo "Processing $filename"
-            # Read the JSON file and send to KV
-            wrangler kv:key put --namespace-id=${{ secrets.KV_NAMESPACE_ID }} "$filename" --value="$(cat $file)"
-          done
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: |
+            for file in lists/*.json; do
+              filename=$(basename "$file" .json)
+              echo "Processing $filename"
+              wrangler kv:key put --namespace-id=${{ secrets.KV_NAMESPACE_ID }} "$filename" --value="$(cat $file)"
+            done
